@@ -151,11 +151,10 @@ submitBtn.addEventListener('click', async () => {
     }
 });
 
-const { Pool } = require('pg');
-
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  // .replace and .trim() remove any hidden characters or formatting glitches
+  connectionString: process.env.DATABASE_URL.replace(/\s/g, '').trim(),
   ssl: {
-    rejectUnauthorized: false // This is key for cloud providers like Render
+    rejectUnauthorized: false 
   }
 });
