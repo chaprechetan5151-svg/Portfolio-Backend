@@ -150,3 +150,12 @@ submitBtn.addEventListener('click', async () => {
         formMessage.innerText = "Make sure your backend server is running!";
     }
 });
+
+const { Pool } = require('pg');
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false // This is key for cloud providers like Render
+  }
+});

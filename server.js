@@ -10,9 +10,14 @@ app.use(cors());
 app.use(express.json()); // CRITICAL: This allows the server to read POST data
 
 // Database Connection
+const { Pool } = require('pg');
+
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false } 
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    // This is the "Magic Key" for Neon + Render
+    rejectUnauthorized: false 
+  }
 });
 
 const PORT = process.env.PORT || 3000;
