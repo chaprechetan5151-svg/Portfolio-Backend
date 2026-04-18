@@ -13,8 +13,6 @@ const loadSkills = async () => {
     try {
         const response = await fetch(API_URL);
         const skills = await response.json();
-
-        // Clear loading state
         container.innerHTML = '';
 
         if (skills.length === 0) {
@@ -22,12 +20,10 @@ const loadSkills = async () => {
             return;
         }
 
-        // Feature: Staggered Animation Injection
         skills.forEach((skill, index) => {
             const card = document.createElement('div');
             card.className = 'project-card animate-in';
-            card.style.animationDelay = `${index * 0.1}s`; // Stagger effect
-            
+            card.style.animationDelay = `${index * 0.1}s`;
             card.innerHTML = `
                 <h3 style="color: var(--accent-color, #ff4d6d); margin-bottom: 5px;">${skill.category}</h3>
                 <p>${skill.technologies}</p>
@@ -59,7 +55,6 @@ const setupAdminPanel = () => {
             return;
         }
 
-        // UI Feedback: Disable button during fetch
         submitBtn.disabled = true;
         submitBtn.innerText = "Syncing with Cloud...";
 
@@ -75,7 +70,7 @@ const setupAdminPanel = () => {
                 msg.innerText = "✨ Database updated successfully!";
                 document.querySelector('#skill-category').value = '';
                 document.querySelector('#skill-tech').value = '';
-                loadSkills(); // Refresh the list without reloading the whole page
+                loadSkills(); 
             }
         } catch (err) {
             msg.innerText = "Error: Database unreachable.";
@@ -100,14 +95,40 @@ window.addEventListener('keydown', (e) => {
         }
         combo = "";
     }
-    // Reset combo if it gets too long
     if (combo.length > 10) combo = "";
 });
 
 // ==========================================
-// INITIALIZE
+// FEATURE 4: RESTORED & PERSISTENT DARK MODE
+// ==========================================
+const setupDarkMode = () => {
+    const themeButton = document.querySelector('#theme-toggle');
+    const bodyElement = document.querySelector('body');
+
+    // Check if user previously liked Dark Mode (LocalStorage)
+    if (localStorage.getItem('theme') === 'dark') {
+        bodyElement.classList.add('dark-theme');
+        themeButton.textContent = 'Light Mode';
+    }
+
+    themeButton.addEventListener('click', () => {
+        bodyElement.classList.toggle('dark-theme');
+        
+        if (bodyElement.classList.contains('dark-theme')) {
+            themeButton.textContent = 'Light Mode';
+            localStorage.setItem('theme', 'dark'); // Remember this!
+        } else {
+            themeButton.textContent = 'Dark Mode';
+            localStorage.setItem('theme', 'light');
+        }
+    });
+};
+
+// ==========================================
+// INITIALIZE EVERYTHING
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
     loadSkills();
     setupAdminPanel();
+    setupDarkMode();
 });
