@@ -1,21 +1,18 @@
 require('dotenv').config(); 
 const express = require('express');
 const cors = require('cors'); 
-const { Pool } = require('pg'); 
+const { Pool } = require('pg'); // Only need this once at the top!
 
 const app = express();
 
-// Middleware: These MUST be at the top
+// Middleware
 app.use(cors()); 
-app.use(express.json()); // CRITICAL: This allows the server to read POST data
+app.use(express.json()); 
 
 // Database Connection
-const { Pool } = require('pg');
-
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    // This is the "Magic Key" for Neon + Render
     rejectUnauthorized: false 
   }
 });
@@ -27,7 +24,7 @@ app.get('/', (req, res) => {
     res.send("Welcome to my Backend API!");
 });
 
-// GET Route: Sends data TO the browser
+// GET Route: Fetch skills
 app.get('/api/skills', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM skills');
@@ -38,16 +35,14 @@ app.get('/api/skills', async (req, res) => {
     }
 });
 
-// POST Route: Receives data FROM Thunder Client/Browser
+// POST Route: Add new skills
 app.post('/api/skills', async (req, res) => {
     try {
         const { category, technologies } = req.body;
-
         const newSkill = await pool.query(
             'INSERT INTO skills (category, technologies) VALUES ($1, $2) RETURNING *',
             [category, technologies]
         );
-
         res.json({
             message: "Skill successfully added to the database!",
             data: newSkill.rows[0]
@@ -60,5 +55,5 @@ app.post('/api/skills', async (req, res) => {
 
 // Boot the Server
 app.listen(PORT, () => {
-    console.log(`🚀 Server is running live on http://localhost:${PORT}`);
+    console.log(`🚀 Server is running on port ${PORT}`);
 });
