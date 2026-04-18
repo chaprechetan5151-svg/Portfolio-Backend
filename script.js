@@ -1,72 +1,113 @@
-// 1. The URL of your LIVE Render Backend
+// ==========================================
+// CONFIGURATION & STATE
+// ==========================================
 const API_URL = 'https://portfolio-backend-og3w.onrender.com/api/skills';
 
-// 2. Function to FETCH skills from the Database
-async function fetchSkills() {
-    const container = document.getElementById('skills-container');
-    
+// ==========================================
+// FEATURE 1: DYNAMIC SKILL LOADER (With Animations)
+// ==========================================
+const loadSkills = async () => {
+    const container = document.querySelector('#skills-container');
+    if (!container) return;
+
     try {
         const response = await fetch(API_URL);
-        const data = await response.json();
+        const skills = await response.json();
 
-        // Clear the "Loading..." message
-        container.innerHTML = ''; 
+        // Clear loading state
+        container.innerHTML = '';
 
-        if (data.length === 0) {
-            container.innerHTML = '<p>No skills added yet.</p>';
+        if (skills.length === 0) {
+            container.innerHTML = `<p class="bio">No skills found. Use the admin panel to add some!</p>`;
             return;
         }
 
-        // Loop through data and show it on the page
-        data.forEach(skill => {
-            const skillCard = document.createElement('div');
-            skillCard.className = 'project-card';
-            skillCard.innerHTML = `
-                <strong>${skill.category}:</strong> ${skill.technologies}
+        // Feature: Staggered Animation Injection
+        skills.forEach((skill, index) => {
+            const card = document.createElement('div');
+            card.className = 'project-card animate-in';
+            card.style.animationDelay = `${index * 0.1}s`; // Stagger effect
+            
+            card.innerHTML = `
+                <h3 style="color: var(--accent-color, #ff4d6d); margin-bottom: 5px;">${skill.category}</h3>
+                <p>${skill.technologies}</p>
             `;
-            container.appendChild(skillCard);
+            container.appendChild(card);
         });
-    } catch (error) {
-        console.error("Fetch Error:", error);
-        container.innerHTML = '<p style="color: red;">Failed to load skills. Check if Backend is live!</p>';
-    }
-}
 
-// 3. Function to ADD a new skill (for your Admin Panel)
-const addBtn = document.getElementById('add-skill-btn');
-if (addBtn) {
-    addBtn.addEventListener('click', async () => {
-        const category = document.getElementById('skill-category').value;
-        const technologies = document.getElementById('skill-tech').value;
-        const message = document.getElementById('form-message');
+    } catch (error) {
+        container.innerHTML = `<p style="color: #ff4d6d;">⚠️ Connection lost to cloud database.</p>`;
+        console.error("Cloud Fetch Error:", error);
+    }
+};
+
+// ==========================================
+// FEATURE 2: ADVANCED FORM HANDLING
+// ==========================================
+const setupAdminPanel = () => {
+    const submitBtn = document.querySelector('#add-skill-btn');
+    if (!submitBtn) return;
+
+    submitBtn.addEventListener('click', async () => {
+        const category = document.querySelector('#skill-category').value.trim();
+        const tech = document.querySelector('#skill-tech').value.trim();
+        const msg = document.querySelector('#form-message');
+
+        if (!category || !tech) {
+            msg.style.color = "#ff4d6d";
+            msg.innerText = "Fields cannot be empty!";
+            return;
+        }
+
+        // UI Feedback: Disable button during fetch
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Syncing with Cloud...";
 
         try {
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ category, technologies })
+                body: JSON.stringify({ category, technologies: tech })
             });
 
             if (response.ok) {
-                message.innerText = "Skill added! Refreshing...";
-                setTimeout(() => location.reload(), 1500);
+                msg.style.color = "#2ecc71";
+                msg.innerText = "✨ Database updated successfully!";
+                document.querySelector('#skill-category').value = '';
+                document.querySelector('#skill-tech').value = '';
+                loadSkills(); // Refresh the list without reloading the whole page
             }
-        } catch (error) {
-            message.innerText = "Error adding skill.";
+        } catch (err) {
+            msg.innerText = "Error: Database unreachable.";
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Add Skill to Database";
         }
     });
-}
+};
 
-// 4. Run the fetch function when the page loads
-fetchSkills();
-
-// 5. Secret Admin Key: Type 'admin' on your keyboard to show the form
-let keys = '';
+// ==========================================
+// FEATURE 3: SECRET ADMIN ACCESS (Keyboard Shortcut)
+// ==========================================
+let combo = "";
 window.addEventListener('keydown', (e) => {
-    keys += e.key;
-    if (keys.includes('admin')) {
-        const adminSection = document.getElementById('admin-section');
-        if (adminSection) adminSection.style.display = 'block';
-        keys = ''; 
+    combo += e.key.toLowerCase();
+    if (combo.includes("admin")) {
+        const panel = document.querySelector('#admin-section');
+        if (panel) {
+            panel.style.display = "block";
+            panel.scrollIntoView({ behavior: 'smooth' });
+        }
+        combo = "";
     }
+    // Reset combo if it gets too long
+    if (combo.length > 10) combo = "";
+});
+
+// ==========================================
+// INITIALIZE
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+    loadSkills();
+    setupAdminPanel();
 });
