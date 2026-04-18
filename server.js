@@ -1,9 +1,4 @@
-// Inside your loadSkills function, before the try block:
-container.innerHTML = `
-    <div class="loading-spinner">
-        <p>📡 Waking up cloud server... (may take 30s)</p>
-    </div>
-`;
+
 require('dotenv').config(); 
 const express = require('express');
 const cors = require('cors'); 
