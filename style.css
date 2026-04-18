@@ -1,0 +1,116 @@
+/* ==========================================
+   1. BASE STYLES (Light Mode - Default)
+   ========================================== */
+body {
+    background-color: #f4f4f9; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333333; 
+    margin: 0;
+    padding: 20px;
+    /* This creates a smooth 0.3-second fade effect when switching themes */
+    transition: background-color 0.3s ease, color 0.3s ease; 
+}
+
+/* ==========================================
+   2. BUTTON STYLING
+   ========================================== */
+#theme-toggle {
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: background-color 0.3s ease;
+}
+
+#theme-toggle:hover {
+    background-color: #1a252f; /* Darkens slightly when you hover over it */
+}
+
+/* ==========================================
+   3. LAYOUT & CONTAINERS
+   ========================================== */
+.container {
+    background-color: #ffffff;
+    max-width: 600px;
+    margin: 0 auto 40px auto; /* Centers the box */
+    padding: 30px; 
+    border: 1px solid #dddddd; 
+    border-radius: 10px; 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.project-card {
+    background-color: #f8f9fa;
+    border-left: 4px solid #2c3e50; /* Creates a nice accent line on the left */
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+/* ==========================================
+   4. TYPOGRAPHY
+   ========================================== */
+h1 {
+    color: #2c3e50;
+    text-align: center; 
+    transition: color 0.3s ease;
+}
+
+h2 {
+    color: #2c3e50;
+    border-bottom: 2px solid #dddddd; /* Adds a divider line under subheadings */
+    padding-bottom: 5px;
+    transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.bio {
+    line-height: 1.6; 
+    font-size: 18px;
+}
+
+ul {
+    list-style-type: square;
+    padding-left: 20px;
+}
+
+/* ==========================================
+   5. DARK MODE OVERRIDES
+   ========================================== */
+/* These rules ONLY activate when JavaScript adds '.dark-theme' to the body */
+
+body.dark-theme {
+    background-color: #1a1a2e;
+    color: #e0e0e0;
+}
+
+body.dark-theme #theme-toggle {
+    background-color: #e94560; /* Changes button to a vibrant red/pink accent */
+    color: #ffffff;
+}
+
+body.dark-theme #theme-toggle:hover {
+    background-color: #d13d56;
+}
+
+body.dark-theme .container {
+    background-color: #16213e;
+    border-color: #0f3460;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5); /* Stronger shadow for dark mode */
+}
+
+body.dark-theme h1, 
+body.dark-theme h2 {
+    color: #e94560;
+    border-color: #0f3460;
+}
+
+body.dark-theme .project-card {
+    background-color: #0f3460;
+    border-left: 4px solid #e94560;
+}
